@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="lineage"
+          fetch="https://github.com/LineageOS"
+          review="review.lineageos.org" />
+
+  <!-- Device Trees (LineageOS 24.0 / Android 17) -->
+  <project path="device/motorola/racer"
+           remote="lineage"
+           name="android_device_motorola_racer"
+           revision="lineage-24.0" />
+
+  <project path="device/motorola/sm7250-common"
+           remote="lineage"
+           name="android_device_motorola_sm7250-common"
+           revision="lineage-24.0" />
+
+  <!-- Kernel: the 24.0 common tree builds from the sm8250 repo (TARGET_KERNEL_SOURCE) -->
+  <project path="kernel/motorola/sm8250"
+           remote="lineage"
+           name="android_kernel_motorola_sm8250"
+           revision="lineage-24.0" />
+
+  <!-- Hardware HALs required by sm7250-common (lineage.dependencies) -->
+  <project path="hardware/motorola"
+           remote="lineage"
+           name="android_hardware_motorola"
+           revision="lineage-24.0" />
+
+  <project path="hardware/sony/timekeep"
+           remote="lineage"
+           name="android_hardware_sony_timekeep"
+           revision="lineage-24.0" />
+
+  <!--
+    Proprietary vendor blobs (vendor/motorola/racer, vendor/motorola/sm7250-common)
+    are NOT listed here: The Muppets only publish a stale lineage-20 branch.
+    Generate them with scripts/04_extract_blobs.sh from a stock firmware dump.
+  -->
+</manifest>
