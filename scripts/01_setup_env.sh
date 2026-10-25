@@ -8,7 +8,7 @@ fi
 
 # Swapfile size (GB). Android 17 links need far more than the 8 GB used for Android 14;
 # override with SWAP_GB=<n> if disk space is tight.
-SWAP_GB="${SWAP_GB:-32}"
+SWAP_GB="${SWAP_GB:-48}"
 
 echo "=== [1/4] Installing Build Packages and Dependencies ==="
 # LineageOS 24.0 uses the prebuilt JDK from the source tree, so no host JDK is needed.
@@ -58,8 +58,8 @@ git config --global color.ui auto
 TOTAL_RAM_MB=$(free -m | awk '/Mem:/ {print $2}')
 CURRENT_SWAP=$(free -m | awk '/Swap:/ {print $2}')
 echo "RAM: ${TOTAL_RAM_MB} MB, swap: ${CURRENT_SWAP} MB"
-if [ "$TOTAL_RAM_MB" -lt 24000 ]; then
-    echo "WARNING: Android 17 builds want 32 GB+ of RAM. Raise the WSL limit in"
+if [ "$TOTAL_RAM_MB" -lt 11000 ]; then
+    echo "WARNING: under ~12 GB of RAM the build is very slow/fragile. Raise the WSL limit in"
     echo "         %UserProfile%\\.wslconfig ([wsl2] memory=...) then run 'wsl --shutdown'."
 fi
 

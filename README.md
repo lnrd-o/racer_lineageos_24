@@ -5,7 +5,7 @@ Project workspace for building and customizing **LineageOS 24.0 (Android 17)** f
 Uses the upstream LineageOS `lineage-24.0` device, common, kernel and HAL trees, plus a thin layer of local tweaks.
 
 > **Status:** scaffold only. Nothing has been synced or built yet, and the trees are untested on this setup.
-> Known blockers: proprietary blobs must be extracted from stock firmware (see step 3), and the build wants far more RAM than WSL's default.
+> Known blockers: proprietary blobs must be extracted from stock firmware (see step 3), and the build is RAM-hungry (tuned here for a ~16 GB host; see Before You Start).
 
 ---
 
@@ -35,13 +35,13 @@ motorolaEdge_ROM/
 
 ## 🧰 Before You Start
 
-* **RAM:** Android 17 builds want 32 GB+. WSL defaults to half of host RAM (7.5 GB seen here). Raise it in `%UserProfile%\.wslconfig`, then run `wsl --shutdown`:
+* **RAM:** Google recommends 32 GB, but a ~16 GB host works with fewer parallel jobs and lots of swap. WSL defaults to half of host RAM (7.5 GB seen here), which is too little. Raise it in `%UserProfile%\.wslconfig`, then run `wsl --shutdown`:
   ```ini
   [wsl2]
-  memory=24GB
-  swap=32GB
+  memory=12GB
+  swap=48GB
   ```
-  `01_setup_env.sh` also creates a swapfile (`SWAP_GB`, default 32) if RAM + swap is below that.
+  `05_build.sh` picks `-j` from available RAM (~1 job per 2.5 GB, min 2; override with `JOBS=<n>`) and caps the Java heap at 6 GB. `01_setup_env.sh` creates a swapfile (`SWAP_GB`, default 48) if RAM + swap is lower. Put the WSL disk on an SSD. Expect a first build of roughly 6-12+ hours; ccache speeds up later builds.
 * **Disk:** ~200 GB free on the WSL ext4 disk for the shallow source tree, `out/` and ccache.
 * **Stock firmware:** download the Motorola Edge (racer) stock Android 11 firmware (the trees' `proprietary-files.txt` target build `RPDS31.Q4U-39-26-14-13`) and unpack it somewhere WSL can read.
 

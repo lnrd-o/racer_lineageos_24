@@ -40,11 +40,21 @@ source build/envsetup.sh
 echo "=== Selecting Target: breakfast racer $BUILD_VARIANT ==="
 breakfast racer "$BUILD_VARIANT"
 
-echo "=== Starting Compilation with $(nproc) Threads ==="
+# Low-RAM friendly parallelism: ~1 job per 2.5 GB of RAM (swap not counted), min 2.
+# Override with JOBS=<n>. Fewer jobs = slower but avoids OOM kills in link/metalava steps.
+if [ -z "${JOBS:-}" ]; then
+    TOTAL_RAM_MB=$(free -m | awk '/Mem:/ {print $2}')
+    JOBS=$((TOTAL_RAM_MB / 2560))
+    [ "$JOBS" -lt 2 ] && JOBS=2
+    [ "$JOBS" -gt "$(nproc)" ] && JOBS=$(nproc)
+fi
+# Cap the JVM heap used by Soong's Java tools (metalava/d8/r8) on small-RAM hosts.
+export _JAVA_OPTIONS="${_JAVA_OPTIONS:--Xmx6g}"
+echo "=== Starting Compilation with $JOBS jobs ($(free -m | awk '/Mem:/ {print $2}') MB RAM) ==="
 START_TIME=$(date +%s)
 
 # Compile ROM package
-mka bacon
+mka bacon -j"$JOBS"
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
